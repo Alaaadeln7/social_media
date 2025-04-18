@@ -1,0 +1,17 @@
+{
+  "name": "soical-media",
+  "version": "1.0.0",
+  "description": "A real-time soical-media application",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "start": "npm run start --prefix server"
+  },
+  "keywords": [
+    "soical-media",
+    "real-time",
+    "application"
+  ],
+  "author": "Alaa adel",
+  "license": "ISC"
+}
