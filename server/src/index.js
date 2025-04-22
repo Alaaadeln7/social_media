@@ -9,7 +9,7 @@ import commentsRoutes from "./routes/commentRoutes.js";
 import groupRoutes from "./routes/groupRoutes.js";
 import conversationRoutes from "./routes/conversationRoutes.js";
 import notificationsRoutes from "./routes/notificationsRoutes.js";
-import eventsRoutes from "./routes/eventsRoutes.js"
+import eventsRoutes from "./routes/eventsRoutes.js";
 import cors from "cors";
 import morgan from "morgan";
 import CookiesParser from "cookie-parser";
@@ -71,14 +71,13 @@ app.use("/api/comment", commentsRoutes);
 app.use("/api/group", groupRoutes);
 app.use("/api/conversation", conversationRoutes);
 app.use("/api/notifications", notificationsRoutes);
-app.use("/api/events", eventsRoutes)
+app.use("/api/events", eventsRoutes);
 // end of routes
 
-
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/dist")));
+  app.use(express.static(path.join(__dirname, "../../client/dist")));
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+    res.sendFile(path.join(__dirname, "../../client", "dist", "index.html"));
   });
 }
 
