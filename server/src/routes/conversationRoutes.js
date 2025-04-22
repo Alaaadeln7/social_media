@@ -14,7 +14,7 @@ import {
   // uploadRecord,
 } from "../controllers/conversationController.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
-import { upload } from "../config/cloudinary.js";
+// import { upload } from "../config/cloudinary.js";
 router.post("/create", protectRoute, createConversation);
 router.get("/", protectRoute, getConversations);
 // router.post("/upload-record", upload.single("audio"), uploadRecord);
