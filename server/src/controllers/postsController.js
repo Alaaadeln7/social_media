@@ -2,8 +2,7 @@ import Post from "../models/postModel.js";
 import User from "../models/UserModel.js";
 import cloudinary from "cloudinary";
 import asyncHandler from "../middlewares/asyncHandler.js";
-import { ERROR, FAILED, SUCCESS } from "../config/statusText.js";
-
+import { ERROR, SUCCESS } from "../config/statusText.js";
 
 export const createPost = asyncHandler(async (req, res) => {
   const author = req.user?._id;
@@ -37,27 +36,37 @@ export const getPosts = asyncHandler(async (req, res) => {
   return res.status(200).json({ posts, hasMore: page * limit < totalPosts });
 });
 
-export const getPostsByUserId = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
-  if (!userId) {
-    return res.status(400).json({ error: "User ID is required." });
-  }
+// export const getPostsByUserId = asyncHandler(async (req, res) => {
+//   const { userId } = req.params;
 
-  const userExist = await User.findById(userId);
+//   if (!userId) {
+//     return res
+//       .status(400)
+//       .json({ status: "error", message: "User ID is required." });
+//   }
 
-  if (!userExist) {
-    return res.status(404).json({ error: "User not found." });
-  }
+//   const userExist = await User.findById(userId);
 
-  const posts = await Post.find({ author: userId })
-    .populate("likes", "userId")
-    .populate("author", "fullName avatar lastSeen")
-    .populate({
-      path: "comments",
-      populate: { path: "userId", select: "fullName avatar" },
-    });
-  return res.status(200).json({ status: "success", data: posts });
-});
+//   if (!userExist) {
+//     return res
+//       .status(404)
+//       .json({ status: "error", message: "User not found." });
+//   }
+
+//   const posts = await Post.find({ author: userId })
+//     .populate("likes", "fullName avatar")
+//     .populate("author", "fullName avatar lastSeen")
+//     .populate({
+//       path: "comments",
+//       populate: { path: "author", select: "fullName avatar" },
+//     });
+
+//   return res.status(200).json({
+//     status: "success",
+//     count: posts.length,
+//     data: posts,
+//   });
+// });
 
 export const updatePost = asyncHandler(async (req, res) => {
   const userId = req.user._id;
@@ -71,7 +80,10 @@ export const updatePost = asyncHandler(async (req, res) => {
     return res.status(404).json({ status: ERROR, message: "Post not found." });
   }
   if (!post.author.equals(userId)) {
-    return res.status(403).json({ status: ERROR, message: "You are not authorized to update this post." });
+    return res.status(403).json({
+      status: ERROR,
+      message: "You are not authorized to update this post.",
+    });
   }
   let imageUrl = post.image;
   if (image && image !== post.image) {
@@ -80,9 +92,10 @@ export const updatePost = asyncHandler(async (req, res) => {
   }
   post.image = imageUrl;
   post.content = content || post.content;
-  await post.save()
-  return res.status(200).json({ message: "Post updated successfully.", status: SUCCESS });
-
+  await post.save();
+  return res
+    .status(200)
+    .json({ message: "Post updated successfully.", status: SUCCESS });
 });
 
 export const deletePost = asyncHandler(async (req, res) => {
@@ -96,7 +109,9 @@ export const deletePost = asyncHandler(async (req, res) => {
   }
 
   if (!post.author.equals(userId)) {
-    return res.status(403).json({ error: "You are not authorized to delete this post." });
+    return res
+      .status(403)
+      .json({ error: "You are not authorized to delete this post." });
   }
 
   await Post.findByIdAndDelete(postId);
@@ -125,26 +140,26 @@ export const toggleLike = asyncHandler(async (req, res) => {
 });
 
 export const makeSavedPost = asyncHandler(async (req, res) => {
-  const { postId } = req.body
-  const userId = req.user._id
-  const post = await Post.findById(postId)
+  const { postId } = req.body;
+  const userId = req.user._id;
+  const post = await Post.findById(postId);
   if (!post) {
-    return res.status(404).json({ message: "Post not found" })
+    return res.status(404).json({ message: "Post not found" });
   }
-  const user = await User.findById(userId)
+  const user = await User.findById(userId);
   if (!user) {
-    return res.status(404).json({ message: "User not found" })
+    return res.status(404).json({ message: "User not found" });
   }
-  user.savedPosts.push(postId)
-  await user.save()
-  return res.status(200).json({ message: "Post saved successfully" })
-})
+  user.savedPosts.push(postId);
+  await user.save();
+  return res.status(200).json({ message: "Post saved successfully" });
+});
 
 export const getSavedPosts = asyncHandler(async (req, res) => {
-  const userId = req.user._id
-  const user = await User.findById(userId)
+  const userId = req.user._id;
+  const user = await User.findById(userId);
   if (!user) {
-    return res.status(404).json({ message: "User not found" })
+    return res.status(404).json({ message: "User not found" });
   }
   const savedPosts = await Post.find({ _id: { $in: user.savedPosts } })
     .populate("author", "fullName avatar lastSeen")
@@ -157,10 +172,10 @@ export const getSavedPosts = asyncHandler(async (req, res) => {
       },
     });
   if (!savedPosts) {
-    return res.status(404).json({ message: "Saved posts not found" })
+    return res.status(404).json({ message: "Saved posts not found" });
   }
   if (savedPosts.length === 0) {
-    return res.status(404).json({ status: SUCCESS, data: savedPosts })
+    return res.status(404).json({ status: SUCCESS, data: savedPosts });
   }
-  return res.status(200).json({ status: SUCCESS, data: savedPosts })
-})
+  return res.status(200).json({ status: SUCCESS, data: savedPosts });
+});

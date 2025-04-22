@@ -3,7 +3,7 @@ import {
   createPost,
   deletePost,
   getPosts,
-  getPostsByUserId,
+  // getPostsByUserId,
   getSavedPosts,
   makeSavedPost,
   toggleLike,
@@ -20,5 +20,5 @@ router.put("/update", protectRoute, updatePost);
 router.delete("/delete/:postId", protectRoute, deletePost);
 router.post("/like", protectRoute, toggleLike);
 router.post("/save-post", protectRoute, makeSavedPost);
-router.get("/:userId", getPostsByUserId);
+// router.get("/:userId", getPostsByUserId);
 export default router;
