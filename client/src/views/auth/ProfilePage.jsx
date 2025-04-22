@@ -16,7 +16,7 @@ import {
   useUpdateProfileImageMutation,
 } from "../../app/api/authApiSlice";
 import { useGetPostsByUserIdQuery } from "../../app/api/postsApiSlice";
-import ShowAvatarModal from "./showAvatarModal";
+import ShowAvatarModal from "./ShowAvatarModal.jsx";
 
 export default function ProfilePage() {
   const [openCreateBioModal, setOpenCreateBioModal] = useState(false);
